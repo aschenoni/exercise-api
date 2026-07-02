@@ -1,0 +1,31 @@
+{
+  "name": "exercise-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Free, public REST API for a hand-curated, hypertrophy-focused exercise library.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "data:check": "node --no-warnings scripts/data-check.ts"
+  },
+  "dependencies": {
+    "next": "^16.2.10",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.9"
+  }
+}
