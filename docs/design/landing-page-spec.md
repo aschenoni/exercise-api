@@ -28,6 +28,10 @@ Success = a developer goes landing → docs → first successful request **unaid
 
 1. **Hero** — one-line value prop + subline. Primary CTA: "Read the docs".
    Secondary CTA: copyable `curl` one-liner (the real API works from the hero — use it).
+   Free-tier framing in the hero: **"Your first 100 calls each day are free — no key
+   required to try it."** Do NOT use "always free", "free forever", "never a key", or
+   any license name in the hero (positioning: free-to-start with a paid ramp later,
+   à la OpenWeather — see PRODUCT.md §6.5/§7).
 2. **Live example** — request/response pair, ideally interactive: a real request to
    `/v1/exercises` with a filter, and the actual JSON response. This is the product demo.
    Highlight the killer filter: `available_equipment=dumbbells,flat_bench` (subset match —
@@ -39,12 +43,16 @@ Success = a developer goes landing → docs → first successful request **unaid
    20 movement patterns · 34 equipment tokens · dataset v1.0.0. (Pull live from
    `/v1/meta` if feasible; static is acceptable.)
 5. **Quickstart** — three tabs or columns: `curl` / JS `fetch` / Python `requests`.
-   Copy buttons. Each ends with "that's it — no key."
+   Copy buttons. Each ends with "that's it — no key needed to start."
 6. **Agent-ready** — small section: OpenAPI 3.1 (`/openapi.json`), `llms.txt`, stable
    slugs + machine-readable errors. Audience: people building AI tools.
-7. **Free & open** — licensing (data CC BY 4.0, code MIT), free/keyless posture,
-   link to suggestions (community input) once it ships.
-8. **Footer** — docs, OpenAPI, GitHub (coming), changelog, licenses.
+7. **Pricing posture** — small section, three steps: try it keyless (100 free
+   calls/day) → free API key for higher limits (fast follow) → commercial tier
+   for teams (coming). Design this as a simple ladder, not a pricing table —
+   there are no prices yet. Plus a link to suggestions (community input) once
+   it ships.
+8. **Footer** — docs, OpenAPI, GitHub (coming), changelog, licenses (data CC BY 4.0,
+   code MIT — the footer is the ONLY place licensing appears on this page).
 
 Monetization surfaces (P5, design now, ship later): one **ad slot** placement that
 degrades to invisible/harmless when unconfigured (Carbon/EthicalAds style — a small
@@ -54,6 +62,10 @@ in header or footer. Never inside API examples or docs content.
 ## 4. Content & tone
 
 - Voice: precise, technical, a little dry; humor allowed in example data, not in claims.
+- **Never promise permanence**: no "always free", "free forever", "never a key",
+  "100% free". The offer is a concrete daily allowance ("first 100 calls/day free")
+  and instant keyless trial. Keys and paid tiers are roadmap; copy must not
+  contradict them.
 - No stock fitness photography, no gym-bro aesthetics. This is a developer tool.
 - All example requests/responses must be **real** — copyable and working against the
   live API. No fabricated fields.

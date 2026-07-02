@@ -10,7 +10,8 @@ export default function Home() {
         A free, public REST API for a hand-curated, hypertrophy-focused exercise
         library — stimulus-to-fatigue ratings, research-backed gold standards,
         e1RM substitution groups, calisthenics progression chains, curated rep
-        ranges, and coaching cues. No signup, no key, JSON in five minutes.
+        ranges, and coaching cues. Your first 100 calls each day are free — no
+        key required to try it.
       </p>
 
       <div className="stats">

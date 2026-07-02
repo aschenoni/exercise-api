@@ -119,12 +119,21 @@ copy-paste examples (curl / JS / Python), versioning & rate-limit policy.
   (Postgres / Vercel KV / auto-filed GitHub issue) and light moderation.
 
 ### 6.5 Monetization
-Keep the API free; fund it lightly.
+Free to start; funded lightly now, priced later.
+- **Positioning (decided):** never promise "always free" or "never a key" — that
+  forecloses the keyed and paid tiers in §7. Model OpenWeather's framing: a concrete
+  free allowance ("**your first 100 calls each day are free**") presented as the entry
+  point, with paid scale as the natural progression. Our DX edge over OpenWeather —
+  the first request works instantly with **no key** — is framed as *friction removed*
+  ("no key required to try it"), not *policy forever*.
+- **Licensing is a footer trust signal, not a headline.** Don't tout MIT/CC BY in the
+  hero — it advertises self-hosting. (And be precise: MIT is the code; the data is
+  CC BY 4.0. Future premium fields need not inherit CC BY — see §12.)
 - **Display ads** on the **marketing/docs site only** (never in API responses). Config-driven
   `AdSlot` component; prefer a developer-friendly network (Carbon/EthicalAds) or AdSense.
 - **"Buy me a coffee"** donation button in the header/footer of the site.
 - Both are env-gated and render as harmless placeholders until configured.
-- *Future:* optional paid tier for higher rate limits / commercial SLA (see §7).
+- **Paid tier (planned, post-v1):** higher rate limits, commercial use assurances / SLA (see §7).
 
 ### 6.6 Agent & machine readability
 First-class support for AI agents and codegen tools consuming the API. Three layers, one
@@ -148,15 +157,19 @@ source of truth (the route definitions + `Exercise` type + dataset):
 
 ## 7. API keys & rate limiting
 
-**v1 launch posture:** the API is **free and keyless** for low-volume use, protected by
-**anonymous per-IP rate limiting** so a single client can't degrade the service.
+**v1 launch posture:** keyless to try, with a concrete free allowance — **the first
+100 calls each day are free** (per IP), enforced by anonymous rate limiting. This is
+the public framing (see §6.5): free-to-start, not free-forever.
 
-- **Anonymous tier:** per-IP limit (e.g. 60 req/min, daily cap). Implemented at the edge
-  (Vercel WAF rate-limit rules or an Upstash/Vercel KV token bucket in middleware).
+- **Anonymous tier:** **100 calls/day per IP** free allowance + a burst limit
+  (e.g. 60 req/min); over the daily allowance → `429` pointing at the free key tier.
+  Implemented at the edge (Vercel WAF rate-limit rules or an Upstash/Vercel KV token
+  bucket in middleware).
 - **Keyed tier (fast follow):** optional free API key (`Authorization: Bearer` or
-  `?api_key=`) for a higher limit and basic usage analytics. Keys issued via a simple
+  `?api_key=`) for a meaningfully higher daily allowance and basic usage analytics —
+  and, importantly, an email relationship with integrators. Keys issued via a simple
   self-serve form; stored in KV/Postgres.
-- **Paid tier (later):** higher limits + commercial use assurances for teams.
+- **Paid tier (later):** higher limits + commercial use assurances / SLA for teams.
 - **Headers:** return `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset`; respond
   `429` with a clear error envelope and `Retry-After`.
 - **Caching as defense:** because catalog responses are static and CDN-cached
