@@ -71,6 +71,15 @@ export default function Docs() {
           {DATASET_VERSION}). The /v1 contract is additive-only: fields and enum values
           are added, never removed or retyped.
         </p>
+        <p className="section-lede">
+          <strong style={{ color: "var(--text)" }}>Attribution.</strong> The data is
+          CC&nbsp;BY&nbsp;4.0 — free to use, including commercially, but products using
+          it must credit ExerciseAPI. A ready-to-use credit line is served in the{" "}
+          <a href="/v1/meta" style={{ color: "var(--accent)" }}>
+            /v1/meta
+          </a>{" "}
+          <code className="inline-code">license</code> object.
+        </p>
       </main>
       <SiteFooter />
     </>

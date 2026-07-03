@@ -47,4 +47,12 @@ describe("dataset contract", () => {
     ]);
     expect(meta.dataset_version).toBe(DATASET_VERSION);
   });
+
+  it("exposes license + required attribution in meta", () => {
+    const { license } = getMeta();
+    expect(license.data).toBe("CC-BY-4.0");
+    expect(license.attribution_required).toBe(true);
+    expect(license.attribution).toContain("ExerciseAPI");
+    expect(license.attribution).toContain("exercise-api.com");
+  });
 });

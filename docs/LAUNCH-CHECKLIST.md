@@ -1,17 +1,25 @@
 # ExerciseAPI — Launch Checklist
 
 Remaining work, organized by phase (companion to [PLAN.md](PLAN.md)).
-**Last updated:** 2026-07-03
+**Last updated:** 2026-07-03 (evening)
 
 ## Done so far
 
 - ✅ **P0** — Next.js app, `Exercise` contract (`src/lib/schema.ts`), `data:check`,
   licenses, CHANGELOG, dataset v1.0.0
 - ✅ **P1** — `/v1` read API (all filters, envelopes, CORS, CDN caching,
-  `X-Dataset-Version`), OpenAPI 3.1 generated from code, 29-test suite
+  `X-Dataset-Version`), OpenAPI 3.1 generated from code, test suite
 - ✅ Landing page implemented from the Claude Design prototype; `/docs` stub
 - ✅ Positioning locked: "first 100 calls/day free", no permanence promises
 - ✅ `exercise-api.com` live (DNS + TLS), canonical in all examples
+- ✅ Pre-launch contract revision: nullable hypertrophy fields + `modality`
+  axis + filter (dataset 1.1.0)
+- ✅ Brand: "Route slash" mark shipped (favicon, apple-icon, header/footer,
+  `public/brand/` asset kit incl. avatar PNG)
+- ✅ Buy Me a Coffee live: env-gated ☕ links (header + footer) →
+  buymeacoffee.com/exercise.api
+- ✅ Attribution: preferred credit format in `DATA-LICENSE`, served
+  machine-readably via the `license` object in `GET /v1/meta`
 
 ## 🚀 Launch gate — minimum to announce publicly
 
@@ -62,9 +70,11 @@ minimum bar:
 
 ## P5 — monetization
 
-- [ ] Apply to Carbon / EthicalAds; set `NEXT_PUBLIC_AD_PROVIDER` and wire the
-  real ad unit (slot is env-gated and hidden until then)
-- [ ] Buy-me-a-coffee link, env-gated (design has header/footer affordances)
+- [ ] Ads: gated on traffic — EthicalAds requires ~50k pageviews/month (see
+  docs/ADS-SETUP.md). When approved: set `NEXT_PUBLIC_AD_PROVIDER` +
+  `NEXT_PUBLIC_AD_PUBLISHER_ID` and wire the provider client into the
+  env-gated slot.
+- ✅ Buy-me-a-coffee link, env-gated (`NEXT_PUBLIC_COFFEE_URL`, 2026-07-03)
 - [ ] Document revenue vs. hosting/AI cost tracking
 
 ## P6 — Orion migration

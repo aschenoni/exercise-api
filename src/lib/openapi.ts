@@ -294,6 +294,7 @@ export function buildOpenApiDocument(origin: string) {
             "object",
             "dataset_version",
             "api_version",
+            "license",
             "counts",
             "primary_muscles",
             "patterns",
@@ -307,6 +308,21 @@ export function buildOpenApiDocument(origin: string) {
             object: { type: "string", const: "meta" },
             dataset_version: { type: "string", example: DATASET_VERSION },
             api_version: { type: "string", const: "v1" },
+            license: {
+              type: "object",
+              description:
+                "Data is CC BY 4.0: free to use, attribution REQUIRED. Products using this data must display the `attribution` credit (or equivalent) per the license.",
+              properties: {
+                data: { type: "string", const: "CC-BY-4.0" },
+                code: { type: "string", const: "MIT" },
+                attribution_required: { type: "boolean", const: true },
+                attribution: {
+                  type: "string",
+                  description: "Ready-to-use attribution line.",
+                },
+                details_url: { type: "string" },
+              },
+            },
             counts: {
               type: "object",
               properties: {

@@ -5,10 +5,14 @@ exercise library — 183 exercises with training-quality metadata: stimulus-to-f
 ratings, research-backed gold-standard flags, e1RM substitution groups, calisthenics
 progression chains, curated rep ranges, and coaching cues.
 
+**Live:** https://exercise-api.com
+
 - **Product doc:** [PRODUCT.md](PRODUCT.md)
-- **Build plan:** [docs/PLAN.md](docs/PLAN.md)
+- **Build plan:** [docs/PLAN.md](docs/PLAN.md) · **status:** [docs/LAUNCH-CHECKLIST.md](docs/LAUNCH-CHECKLIST.md)
 - **Data provenance:** [data/SOURCE.md](data/SOURCE.md)
-- **License:** code MIT ([LICENSE](LICENSE)), data CC BY 4.0 ([DATA-LICENSE](DATA-LICENSE))
+- **License:** code MIT ([LICENSE](LICENSE)), data CC BY 4.0 ([DATA-LICENSE](DATA-LICENSE)) —
+  **attribution required**; preferred credit format in DATA-LICENSE, also served in
+  `GET /v1/meta` (`license` object)
 
 ## API
 

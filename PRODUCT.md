@@ -78,9 +78,14 @@ Exposed via `/v1/meta`.
 
 ### Data licensing
 - **Code:** MIT.
-- **Data:** **CC BY 4.0** — free to use with attribution. This lets others build on the
-  catalog while keeping the project's credit, and is compatible with monetizing the
-  *service* (hosting, docs, chat) rather than the data itself.
+- **Data:** **CC BY 4.0** — free to use, **attribution required** (including for
+  commercial services). This lets others build on the catalog while keeping the
+  project's credit, and is compatible with monetizing the *service* (hosting, docs,
+  chat) rather than the data itself.
+- **Attribution guidance (added 2026-07-03):** preferred credit text lives in
+  `DATA-LICENSE` and is served machine-readably as the `license` object in
+  `GET /v1/meta`, so integrators (and their AI agents) see the requirement at the
+  point of integration, not just in legal files.
 
 ## 6. The product surfaces
 

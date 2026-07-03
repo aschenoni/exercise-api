@@ -19,12 +19,10 @@ sequence is: donations now, ads when traffic justifies them.
 
 ## Recommended sequence
 
-### Now (5 minutes): Buy Me a Coffee
-1. Create an account at buymeacoffee.com (or ko-fi.com — either works).
-2. Claim a page name, e.g. `buymeacoffee.com/exerciseapi`.
-3. Connect a payout method (bank / Stripe per their flow).
-4. Send me the page URL → I add `NEXT_PUBLIC_COFFEE_URL` to Vercel env and wire
-   the ☕ affordances the design already has (header + footer + pricing section).
+### ✅ Done (2026-07-03): Buy Me a Coffee
+Page live at buymeacoffee.com/exercise.api; `NEXT_PUBLIC_COFFEE_URL` set in
+Vercel (Production + Preview); ☕ links render in header + footer. Profile
+photo: https://exercise-api.com/brand/avatar-1024.png.
 
 ### At launch + traffic: EthicalAds (preferred)
 1. Watch traffic in Vercel Analytics (checklist item — not yet installed).

@@ -24,6 +24,8 @@ Two independently versioned axes (see PRODUCT.md §10):
   From launch onward, `/v1` is strictly additive.
 - New `modality` field + `modality` filter on `GET /v1/exercises`; `modalities`
   vocabulary in `GET /v1/meta`.
+- `license` object in `GET /v1/meta` (additive): data/code license identifiers,
+  `attribution_required: true`, and a ready-to-use attribution line.
 
 ### Dataset
 - **1.1.0** — added `modality` to all 183 records (`hypertrophy` ×136,

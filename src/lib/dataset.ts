@@ -1,4 +1,5 @@
 import type { Exercise } from "./schema";
+import { SITE_URL } from "./site";
 import exercisesJson from "../../data/exercises.json";
 import versionJson from "../../data/version.json";
 
@@ -31,6 +32,13 @@ export interface Meta {
   object: "meta";
   dataset_version: string;
   api_version: "v1";
+  license: {
+    data: string;
+    code: string;
+    attribution_required: boolean;
+    attribution: string;
+    details_url: string;
+  };
   counts: { total: number; by_tier: Record<string, number> };
   primary_muscles: { value: string; count: number }[];
   patterns: { value: string; count: number }[];
@@ -50,6 +58,13 @@ export function getMeta(): Meta {
     object: "meta",
     dataset_version: DATASET_VERSION,
     api_version: "v1",
+    license: {
+      data: "CC-BY-4.0",
+      code: "MIT",
+      attribution_required: true,
+      attribution: `Exercise data by ExerciseAPI (${SITE_URL}), licensed under CC BY 4.0.`,
+      details_url: "https://creativecommons.org/licenses/by/4.0/",
+    },
     counts: {
       total: all.length,
       by_tier: Object.fromEntries(
