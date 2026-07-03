@@ -21,10 +21,17 @@ function clientIp(request: NextRequest): string {
  * Chat and suggestions cost money / invite spam, so their buckets are far
  * stricter than the read API (PRODUCT.md §7 "abuse controls").
  */
-function limitsFor(pathname: string): { scope: string; dailyLimit?: number; burstLimit?: number } {
-  if (pathname.startsWith("/v1/chat")) return { scope: "chat", dailyLimit: 20, burstLimit: 5 };
+function limitsFor(pathname: string): {
+  scope: string;
+  dailyLimit?: number;
+  burstLimit?: number;
+  failMode?: "open" | "closed";
+} {
+  // Costly namespaces fail CLOSED on store errors; the free read API fails open.
+  if (pathname.startsWith("/v1/chat"))
+    return { scope: "chat", dailyLimit: 20, burstLimit: 5, failMode: "closed" };
   if (pathname.startsWith("/v1/suggestions"))
-    return { scope: "sugg", dailyLimit: 5, burstLimit: 2 };
+    return { scope: "sugg", dailyLimit: 5, burstLimit: 2, failMode: "closed" };
   return { scope: "api" };
 }
 

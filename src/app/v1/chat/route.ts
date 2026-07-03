@@ -69,7 +69,24 @@ export async function POST(request: Request): Promise<Response> {
     if (!Array.isArray(body.messages) || body.messages.length === 0) {
       return errorResponse("invalid_parameter", `Body must be { messages: UIMessage[] }.`);
     }
-    messages = body.messages.slice(-10); // bound context growth
+    // Sanitize untrusted history: the client controls this array wholesale, so
+    // (a) only user/assistant roles survive — no injected system/tool turns,
+    // (b) only text parts survive, (c) every message is length-capped so a fat
+    // history can't inflate input-token spend, (d) at most the last 10 turns.
+    messages = body.messages
+      .filter((m) => m?.role === "user" || m?.role === "assistant")
+      .map((m, i) => ({
+        id: typeof m.id === "string" ? m.id.slice(0, 64) : String(i),
+        role: m.role,
+        parts: (Array.isArray(m.parts) ? m.parts : [])
+          .filter(
+            (p): p is { type: "text"; text: string } =>
+              p?.type === "text" && typeof (p as { text?: unknown }).text === "string",
+          )
+          .map((p) => ({ type: "text" as const, text: p.text.slice(0, MAX_MESSAGE_CHARS) })),
+      }))
+      .filter((m) => m.parts.length > 0)
+      .slice(-10);
   } catch {
     return errorResponse("invalid_parameter", "Body must be valid JSON.");
   }
@@ -83,7 +100,16 @@ export async function POST(request: Request): Promise<Response> {
     return errorResponse("invalid_parameter", "The last user message has no text.");
   }
 
+  // Spend cap fails CLOSED: if the counter store is unreachable we cannot
+  // meter the shared budget, so paid inference is refused (the read API is
+  // untouched — only chat degrades).
   const used = await bumpDailyCounter("chat");
+  if (used === null) {
+    return errorResponse(
+      "service_unavailable",
+      "The assistant is temporarily unavailable. The read API is unaffected.",
+    );
+  }
   if (used > GLOBAL_DAILY_CAP) {
     return errorResponse(
       "rate_limited",

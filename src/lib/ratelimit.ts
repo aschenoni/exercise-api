@@ -84,13 +84,25 @@ export interface RateLimitOptions {
   store?: Store;
   /** Separate bucket namespace (e.g. "chat", "sugg") — default shared "api". */
   scope?: string;
+  /**
+   * Behavior when the store errors. "open" (default) admits the request —
+   * right for the free read API, where availability beats strictness.
+   * "closed" refuses it — right for endpoints that cost money or file
+   * external artifacts, where an unmetered flood is the worse failure.
+   */
+  failMode?: "open" | "closed";
 }
 
 /**
  * Global (not per-IP) daily counter — used for the chat spend cap.
- * Returns the new count; throws are swallowed to 0 (degrade open).
+ * Returns the new count, or null when the store is unreachable so callers
+ * metering MONEY can fail closed (unlike the free-read rate limits, which
+ * deliberately fail open).
  */
-export async function bumpDailyCounter(name: string, now = Date.now()): Promise<number> {
+export async function bumpDailyCounter(
+  name: string,
+  now = Date.now(),
+): Promise<number | null> {
   const s = store ??= defaultStore();
   const day = new Date(now).toISOString().slice(0, 10);
   const ttl = Math.max(1, Math.ceil((Date.UTC(
@@ -101,7 +113,7 @@ export async function bumpDailyCounter(name: string, now = Date.now()): Promise<
   try {
     return await s.incr(`ctr:${name}:${day}`, ttl);
   } catch {
-    return 0;
+    return null;
   }
 }
 
@@ -157,7 +169,17 @@ export async function checkRateLimit(
       resetSeconds,
     };
   } catch {
-    // Degrade open: a broken store must never take the API down.
+    if (opts.failMode === "closed") {
+      return {
+        allowed: false,
+        reason: "burst",
+        limit: dailyLimit,
+        remaining: 0,
+        resetSeconds,
+        retryAfterSeconds: 60,
+      };
+    }
+    // Degrade open: a broken store must never take the free read API down.
     return { allowed: true, limit: dailyLimit, remaining: dailyLimit, resetSeconds };
   }
 }

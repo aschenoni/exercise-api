@@ -50,7 +50,7 @@ describe("checkRateLimit (in-memory store)", () => {
     expect(tomorrow.allowed).toBe(true);
   });
 
-  it("degrades open when the store throws", async () => {
+  it("degrades open when the store throws (default read-API mode)", async () => {
     const broken = {
       incr: async () => {
         throw new Error("store down");
@@ -58,6 +58,35 @@ describe("checkRateLimit (in-memory store)", () => {
     };
     const r = await checkRateLimit("ip-x", { now: NOON, store: broken });
     expect(r.allowed).toBe(true);
+  });
+
+  it("fails closed on store errors when failMode is closed", async () => {
+    const broken = {
+      incr: async () => {
+        throw new Error("store down");
+      },
+    };
+    const r = await checkRateLimit("ip-x", { now: NOON, store: broken, failMode: "closed" });
+    expect(r.allowed).toBe(false);
+    expect(r.retryAfterSeconds).toBe(60);
+  });
+
+  it("keeps scoped buckets independent", async () => {
+    await checkRateLimit("ip-scope", { now: NOON, dailyLimit: 1, burstLimit: 5, scope: "chat" });
+    const chatBlocked = await checkRateLimit("ip-scope", {
+      now: NOON + 61_000,
+      dailyLimit: 1,
+      burstLimit: 5,
+      scope: "chat",
+    });
+    const apiFine = await checkRateLimit("ip-scope", {
+      now: NOON,
+      dailyLimit: 1,
+      burstLimit: 5,
+      scope: "api",
+    });
+    expect(chatBlocked.allowed).toBe(false);
+    expect(apiFine.allowed).toBe(true);
   });
 
   it("tracks IPs independently", async () => {
