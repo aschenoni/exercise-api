@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
+import { track } from "@vercel/analytics";
 
 export function CopyButton({
   text,
@@ -24,6 +25,8 @@ export function CopyButton({
       aria-label="Copy to clipboard"
       onClick={() => {
         navigator.clipboard?.writeText(text).catch(() => {});
+        // funnel proxy for "developer grabbed a snippet" (PRODUCT.md §11)
+        track("snippet_copied");
         clearTimeout(timer.current);
         setDone(true);
         timer.current = setTimeout(() => setDone(false), 1400);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { track } from "@vercel/analytics";
 
 /**
  * The interactive `available_equipment` demo — runs against the real API on
@@ -65,6 +66,7 @@ export function LiveDemo() {
   }, [query]);
 
   const toggle = (tok: string) => {
+    track("demo_equipment_toggled", { token: tok });
     setEquip((prev) => {
       const next = prev.includes(tok) ? prev.filter((t) => t !== tok) : [...prev, tok];
       return next.length === 0 ? ["dumbbells"] : next;
