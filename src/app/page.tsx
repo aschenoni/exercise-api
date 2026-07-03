@@ -33,6 +33,9 @@ print(r.json()["data"][0]["name"])`;
 export default function Home() {
   const meta = getMeta();
   const heroExercise = getExerciseById("barbell_bench_press");
+  // Env-gated (PRODUCT.md §6.5): the ad slot renders nothing until a provider
+  // is configured, e.g. NEXT_PUBLIC_AD_PROVIDER=carbon.
+  const adConfigured = Boolean(process.env.NEXT_PUBLIC_AD_PROVIDER);
 
   return (
     <>
@@ -280,7 +283,7 @@ export default function Home() {
 
         {/* ============ PRICING POSTURE ============ */}
         <section className="section">
-          <div className="container section-pad pricing-grid">
+          <div className={`container section-pad${adConfigured ? " pricing-grid" : ""}`}>
             <div>
               <div className="eyebrow">PRICING</div>
               <h2 className="h2">Free to start. Scale when you ship.</h2>
@@ -319,14 +322,14 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="ad-slot" aria-hidden="true">
-              <div className="ad-slot-label">AD SLOT · 300×250</div>
-              <div className="ad-slot-body">
-                Single Carbon / EthicalAds unit.
-                <br />
-                Renders nothing when unconfigured — never inside examples or docs.
+            {adConfigured && (
+              <div className="ad-slot" aria-hidden="true">
+                <div className="ad-slot-label">AD SLOT · 300×250</div>
+                <div className="ad-slot-body">
+                  Ad unit placeholder — wire the configured provider here.
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </section>
       </main>
