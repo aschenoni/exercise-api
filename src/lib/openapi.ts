@@ -41,7 +41,13 @@ const errorSchema = {
       properties: {
         code: {
           type: "string",
-          enum: ["invalid_parameter", "not_found", "rate_limited", "internal_error"],
+          enum: [
+            "invalid_parameter",
+            "not_found",
+            "rate_limited",
+            "service_unavailable",
+            "internal_error",
+          ],
           description: "Stable machine-readable error code.",
         },
         message: { type: "string", description: "Human-readable explanation." },
@@ -246,6 +252,89 @@ export function buildOpenApiDocument(origin: string) {
           },
         },
       },
+      "/v1/suggestions": {
+        post: {
+          operationId: "createSuggestion",
+          summary: "Suggest a missing exercise, field, or correction",
+          description:
+            "Community proposals, not edits: valid submissions are filed to the public issue tracker for review; accepted ones become dataset releases. Strictly rate-limited (5/day per IP).",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/SuggestionRequest" },
+              },
+            },
+          },
+          responses: {
+            "202": {
+              description: "Suggestion recorded for review.",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      object: { type: "string", const: "suggestion" },
+                      status: { type: "string", const: "received" },
+                      issue_url: { type: "string" },
+                      message: { type: "string" },
+                    },
+                  },
+                },
+              },
+            },
+            "400": {
+              description: "Validation failed; the message says why.",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/Error" } },
+              },
+            },
+            "429": { $ref: "#/components/responses/RateLimited" },
+            "503": { $ref: "#/components/responses/Unavailable" },
+          },
+        },
+      },
+      "/v1/chat": {
+        post: {
+          operationId: "chat",
+          summary: "Catalog-grounded assistant (streaming)",
+          description:
+            "Answers questions from the catalog data only. Accepts AI SDK UIMessage arrays and streams the reply (AI SDK UI message stream). Tightly rate-limited (20/day per IP) with a shared daily budget; returns 503 when the deployment has no AI credentials.",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["messages"],
+                  properties: {
+                    messages: {
+                      type: "array",
+                      description:
+                        "AI SDK UIMessage array; the last user message is answered.",
+                      items: { type: "object" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description: "Streaming assistant reply (AI SDK UI message stream).",
+              content: { "text/event-stream": { schema: { type: "string" } } },
+            },
+            "400": {
+              description: "Malformed body.",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/Error" } },
+              },
+            },
+            "429": { $ref: "#/components/responses/RateLimited" },
+            "503": { $ref: "#/components/responses/Unavailable" },
+          },
+        },
+      },
       "/health": {
         get: {
           operationId: "getHealth",
@@ -272,6 +361,13 @@ export function buildOpenApiDocument(origin: string) {
     },
     components: {
       responses: {
+        Unavailable: {
+          description:
+            "This feature is not configured on the deployment or temporarily unavailable. The read API is unaffected.",
+          content: {
+            "application/json": { schema: { $ref: "#/components/schemas/Error" } },
+          },
+        },
         RateLimited: {
           description:
             "Anonymous rate limit exceeded (100 requests/day per IP, plus a per-minute burst limit). Honor Retry-After; RateLimit-Limit / RateLimit-Remaining / RateLimit-Reset headers are sent on every /v1 response.",
@@ -364,6 +460,39 @@ export function buildOpenApiDocument(origin: string) {
             properties: {
               value: { type: "string" },
               count: { type: "integer" },
+            },
+          },
+        },
+        SuggestionRequest: {
+          type: "object",
+          required: ["type", "title"],
+          properties: {
+            type: {
+              type: "string",
+              enum: ["new_exercise", "correction", "new_field", "other"],
+              description: "What kind of suggestion this is.",
+            },
+            title: {
+              type: "string",
+              minLength: 5,
+              maxLength: 200,
+              description: "One-line summary.",
+            },
+            details: {
+              type: "string",
+              maxLength: 4000,
+              description:
+                "The case for it: equipment, muscles, SFR reasoning, sources.",
+            },
+            exercise_id: {
+              type: "string",
+              description:
+                "For corrections: the existing exercise's slug. Must exist in the catalog.",
+            },
+            contact: {
+              type: "string",
+              maxLength: 200,
+              description: "Optional handle/email if follow-up questions are welcome.",
             },
           },
         },

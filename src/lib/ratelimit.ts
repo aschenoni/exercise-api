@@ -82,6 +82,27 @@ export interface RateLimitOptions {
   burstLimit?: number;
   now?: number;
   store?: Store;
+  /** Separate bucket namespace (e.g. "chat", "sugg") — default shared "api". */
+  scope?: string;
+}
+
+/**
+ * Global (not per-IP) daily counter — used for the chat spend cap.
+ * Returns the new count; throws are swallowed to 0 (degrade open).
+ */
+export async function bumpDailyCounter(name: string, now = Date.now()): Promise<number> {
+  const s = store ??= defaultStore();
+  const day = new Date(now).toISOString().slice(0, 10);
+  const ttl = Math.max(1, Math.ceil((Date.UTC(
+    new Date(now).getUTCFullYear(),
+    new Date(now).getUTCMonth(),
+    new Date(now).getUTCDate() + 1,
+  ) - now) / 1000));
+  try {
+    return await s.incr(`ctr:${name}:${day}`, ttl);
+  } catch {
+    return 0;
+  }
 }
 
 export async function checkRateLimit(
@@ -102,10 +123,11 @@ export async function checkRateLimit(
   );
   const resetSeconds = Math.max(1, Math.ceil((nextUtcMidnight - now) / 1000));
 
+  const scope = opts.scope ?? "api";
   try {
     const [daily, burst] = await Promise.all([
-      s.incr(`rl:d:${ip}:${day}`, resetSeconds),
-      s.incr(`rl:m:${ip}:${minute}`, 60),
+      s.incr(`rl:${scope}:d:${ip}:${day}`, resetSeconds),
+      s.incr(`rl:${scope}:m:${ip}:${minute}`, 60),
     ]);
 
     if (burst > burstLimit) {

@@ -27,7 +27,9 @@ function endpointList(origin: string): string {
 - [GET ${origin}/v1/exercises/{id}](${origin}/v1/exercises/barbell_bench_press): one exercise by stable slug
 - [GET ${origin}/v1/meta](${origin}/v1/meta): controlled vocabularies + counts + dataset_version + license
 - [GET ${origin}/health](${origin}/health): liveness + dataset size
-- [GET ${origin}/openapi.json](${origin}/openapi.json): OpenAPI 3.1 spec (canonical machine contract)`;
+- [GET ${origin}/openapi.json](${origin}/openapi.json): OpenAPI 3.1 spec (canonical machine contract)
+- POST ${origin}/v1/suggestions: propose a missing exercise/correction (JSON: type, title, details?, exercise_id?; strict limits)
+- POST ${origin}/v1/chat: catalog-grounded assistant, streaming (AI SDK UIMessage format; strict limits; UI at ${origin}/chat)`;
 }
 
 export function llmsTxt(origin: string): string {

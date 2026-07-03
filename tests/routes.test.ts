@@ -85,6 +85,8 @@ describe("GET /openapi.json", () => {
       "/v1/exercises",
       "/v1/exercises/{id}",
       "/v1/meta",
+      "/v1/suggestions",
+      "/v1/chat",
       "/health",
     ]);
     const props = doc.components.schemas.Exercise.properties;

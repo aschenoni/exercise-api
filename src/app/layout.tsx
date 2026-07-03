@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -36,7 +37,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${sans.variable} ${mono.variable}`}>{children}</body>
+      <body className={`${sans.variable} ${mono.variable}`}>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

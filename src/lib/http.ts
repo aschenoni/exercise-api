@@ -35,12 +35,18 @@ export function jsonResponse(body: unknown, init?: { status?: number }): Respons
 }
 
 /** Stable machine-readable error codes — part of the /v1 contract. */
-export type ErrorCode = "invalid_parameter" | "not_found" | "rate_limited" | "internal_error";
+export type ErrorCode =
+  | "invalid_parameter"
+  | "not_found"
+  | "rate_limited"
+  | "service_unavailable"
+  | "internal_error";
 
 const ERROR_STATUS: Record<ErrorCode, number> = {
   invalid_parameter: 400,
   not_found: 404,
   rate_limited: 429,
+  service_unavailable: 503,
   internal_error: 500,
 };
 

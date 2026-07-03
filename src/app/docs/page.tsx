@@ -30,6 +30,8 @@ const ENDPOINTS: [string, string, string][] = [
   ["GET /health", "/health", "Liveness + dataset size."],
   ["GET /openapi.json", "/openapi.json", "OpenAPI 3.1 spec — the canonical machine contract."],
   ["GET /llms.txt", "/llms.txt", "Concise API map for doc-reading agents (llms-full.txt = everything)."],
+  ["POST /v1/suggestions", "/openapi.json", "Suggest a missing exercise / correction — filed to the public issue tracker for review. 5/day per IP."],
+  ["POST /v1/chat", "/chat", "Catalog-grounded assistant (streaming). Try it at /chat. 20/day per IP."],
 ];
 
 const PARAMS: [string, string, string][] = [

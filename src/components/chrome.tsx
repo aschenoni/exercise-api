@@ -47,6 +47,9 @@ export function SiteHeader() {
           <a href="/openapi.json" className="hide-mobile">
             OpenAPI
           </a>
+          <a href="/chat" className="hide-mobile">
+            Chat
+          </a>
           {COFFEE_URL && (
             <a href={COFFEE_URL} className="hide-mobile" rel="noopener">
               ☕ Coffee
@@ -85,7 +88,7 @@ export function SiteFooter() {
         <div>
           <div className="footer-col-label">DATA</div>
           <div className="footer-links">
-            <span className="soon">Suggest an exercise (soon)</span>
+            <a href="/docs#endpoints">Suggest an exercise</a>
             <a href="https://github.com/aschenoni/exercise-api" rel="noopener">
               GitHub
             </a>

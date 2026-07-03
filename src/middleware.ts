@@ -17,10 +17,21 @@ function clientIp(request: NextRequest): string {
   );
 }
 
+/**
+ * Chat and suggestions cost money / invite spam, so their buckets are far
+ * stricter than the read API (PRODUCT.md §7 "abuse controls").
+ */
+function limitsFor(pathname: string): { scope: string; dailyLimit?: number; burstLimit?: number } {
+  if (pathname.startsWith("/v1/chat")) return { scope: "chat", dailyLimit: 20, burstLimit: 5 };
+  if (pathname.startsWith("/v1/suggestions"))
+    return { scope: "sugg", dailyLimit: 5, burstLimit: 2 };
+  return { scope: "api" };
+}
+
 export async function middleware(request: NextRequest) {
   if (request.method === "OPTIONS") return NextResponse.next();
 
-  const result = await checkRateLimit(clientIp(request));
+  const result = await checkRateLimit(clientIp(request), limitsFor(request.nextUrl.pathname));
 
   const headers: Record<string, string> = {
     "RateLimit-Limit": String(result.limit),

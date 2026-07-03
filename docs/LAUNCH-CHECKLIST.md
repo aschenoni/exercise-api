@@ -1,173 +1,96 @@
-# ExerciseAPI — Launch Checklist
+# ExerciseAPI — Status & Remaining Work
 
-Remaining work, organized by phase (companion to [PLAN.md](PLAN.md)).
-**Last updated:** 2026-07-03 (evening)
+Companion to [PLAN.md](PLAN.md). **Last updated:** 2026-07-03 (P4 shipped)
 
-## Done so far
+## ✅ Shipped
 
-- ✅ **P0** — Next.js app, `Exercise` contract (`src/lib/schema.ts`), `data:check`,
-  licenses, CHANGELOG, dataset v1.0.0
-- ✅ **P1** — `/v1` read API (all filters, envelopes, CORS, CDN caching,
-  `X-Dataset-Version`), OpenAPI 3.1 generated from code, test suite
-- ✅ Landing page implemented from the Claude Design prototype; `/docs` stub
-- ✅ Positioning locked: "first 100 calls/day free", no permanence promises
-- ✅ `exercise-api.com` live (DNS + TLS), canonical in all examples
-- ✅ Pre-launch contract revision: nullable hypertrophy fields + `modality`
-  axis + filter (dataset 1.1.0)
-- ✅ Brand: "Route slash" mark shipped (favicon, apple-icon, header/footer,
-  `public/brand/` asset kit incl. avatar PNG)
-- ✅ Buy Me a Coffee live: env-gated ☕ links (header + footer) →
-  buymeacoffee.com/exercise.api
-- ✅ Attribution: preferred credit format in `DATA-LICENSE`, served
-  machine-readably via the `license` object in `GET /v1/meta`
+- **P0/P1** — Next.js app, canonical contract (`src/lib/schema.ts`), `data:check`,
+  full `/v1` read API (filters, envelopes, CORS, CDN caching, `X-Dataset-Version`),
+  OpenAPI 3.1 generated from code, test suite (43 tests)
+- **Pre-launch contract revision** — nullable hypertrophy fields + `modality`
+  axis + filter (dataset 1.1.0). From launch onward /v1 is strictly additive.
+- **P2** — designed landing page (Claude Design), docs site v1 (`/docs`: param
+  tables, field dictionary from FIELD_SPECS, vocabularies, policies), Scalar
+  reference (`/docs/api`), `/llms.txt` + `/llms-full.txt`, brand mark
+  (favicon/apple-icon/header/avatar kit)
+- **P3 (anonymous tier)** — middleware rate limiting on `/v1/*`: 100/day +
+  60/min burst per IP, `RateLimit-*` headers, `429` envelope; stricter buckets
+  for chat (20/day, 5/min) and suggestions (5/day, 2/min); degrades open
+- **P4** — `POST /v1/suggestions` (validated → GitHub issue, 202 envelope,
+  503 until token configured) · `POST /v1/chat` (catalog-grounded via keyword
+  retrieval, streaming through Vercel AI Gateway, global daily budget cap,
+  503 degrade) · `/chat` streaming UI
+- **Launch gate complete (2026-07-03)** — site is announceable
+- **Infra** — exercise-api.com (DNS+TLS), GitHub repo public + Git integration
+  (push-to-deploy), dataset snapshot release `dataset-v1.1.0`, Vercel
+  Analytics component installed
+- **Monetization/positioning** — "first 100 calls/day free" everywhere,
+  attribution requirement in DATA-LICENSE + `/v1/meta` `license` object,
+  Buy Me a Coffee live, ad slot env-gated
 
-## 🚀 Launch gate — ✅ COMPLETE 2026-07-03
+## 🔑 Owner actions (Austin — small, unblock shipped features)
 
-- ✅ **`/llms.txt` + `/llms-full.txt`** — generated from schema/meta at request
-  time (same source of truth as OpenAPI).
-- ✅ **Anonymous rate limiting** — middleware on `/v1/*`: 100/day + 60/min
-  burst per IP, `RateLimit-*` headers, `429` `rate_limited` envelope +
-  `Retry-After`. Upstash store when configured; in-memory best-effort
-  fallback until then (degrades open). *Optional hardening: provision
-  Upstash Redis for accurate cross-instance counts.*
-- ✅ **Docs site v1** — /docs: endpoints, param tables, field dictionary
-  (generated from FIELD_SPECS), live vocabularies, conventions, rate-limit +
-  versioning policy, attribution. /docs/api: Scalar-rendered OpenAPI
-  (pinned + SRI).
-- ✅ **GitHub repo public + Git integration** —
-  github.com/aschenoni/exercise-api; pushes to main auto-deploy production.
-- ✅ **Dataset snapshot release** — `exercises@1.1.0.json` published:
-  github.com/aschenoni/exercise-api/releases/tag/dataset-v1.1.0
+- [ ] **Suggestions token**: create a fine-grained GitHub PAT (repo:
+  `aschenoni/exercise-api`, permission: Issues read+write, nothing else) →
+  add as `GITHUB_ISSUES_TOKEN` in Vercel env. Until then the endpoint 503s
+  with a pointer to the issue tracker.
+- [ ] **Enable Web Analytics** in the Vercel dashboard (project → Analytics
+  tab → Enable). The component is deployed; it no-ops until enabled.
+- [ ] **Verify chat billing**: chat uses Vercel AI Gateway via OIDC on the
+  deployment. Confirm usage/credits in the dashboard (AI Gateway tab) and
+  adjust `CHAT_GLOBAL_DAILY_CAP` (default 300 msgs/day) to taste.
+- [ ] Optional hardening: provision **Upstash Redis** (Vercel Marketplace) so
+  rate limits are exact across instances; env vars are already wired.
+- [ ] Optional: www → apex redirect (dashboard toggle), EthicalAds application
+  once traffic ≥ ~50k views/mo (see ADS-SETUP.md).
 
-**The site can now be announced publicly.**
+## 📋 Remaining work, by phase
 
-## P2 — developer product surface (remainder)
+### P3 remainder — free API key tier
+- [ ] Self-serve key issuance (simple form), storage (Upstash/Postgres),
+  `Authorization: Bearer` / `?api_key=` recognition in middleware,
+  higher daily allowance, minimal usage counters
+- [ ] Docs: key tier policy page; keep read API keyless
 
-- [ ] Full docs site (above)
-- [ ] Scalar/Swagger UI rendering `/openapi.json`
-- [ ] `llms.txt` / `llms-full.txt` (above)
-- [ ] OG image — concept exists in the design prototype; implement with `next/og`
-- [ ] SEO pass: `sitemap.xml`, `robots.txt`, canonical URLs
-- [ ] www → apex 308 redirect (Vercel dashboard toggle)
+### P4 remainder — hardening
+- [ ] Bot protection on chat/suggestions (Vercel BotID) if abuse appears
+- [ ] Suggestion triage workflow doc: label conventions → accepted suggestions
+  become dataset MINOR/PATCH releases (who reviews: Austin)
 
-## P3 — rate limiting & API keys (remainder)
+### P5 — monetization remainder
+- [ ] EthicalAds (traffic-gated; wire provider client into the env-gated slot)
+- [ ] Revenue vs. hosting/AI cost tracking doc
 
-- [ ] Anonymous per-IP limiting (above, launch gate)
-- [ ] Free API key tier: self-serve issuance form, KV/Postgres storage, higher
-  daily allowance, minimal usage counters (also: the email relationship)
-- [ ] Pre-provision stricter buckets for chat/suggestions namespaces
-- [ ] Load test: confirm `429` + headers behave under burst
+### P6 — Orion migration
+- [ ] Point Orion's seed/build at the pinned `exercises@1.1.0.json` snapshot;
+  remove duplicated JSON from Orion; verify every `id` resolves; update docs
 
-## P4 — chat & suggestions
+### P7 — MCP server
+- [ ] First-party MCP server (`search_exercises`, `get_exercise`, `list_meta`)
+  over the same query engine; host on Vercel; document in docs site
 
-- [ ] `POST /v1/suggestions` — validation, persistent store (KV/Postgres or
-  auto-filed GitHub issue), moderation/triage workflow. Footer currently says
-  "(soon)".
-- [ ] `POST /v1/chat` — catalog-grounded retrieval, Vercel AI Gateway
-  (default Claude), BotID, per-IP token bucket, hard daily spend cap,
-  graceful `503` when unconfigured
-- [ ] `/chat` streaming UI on the site
+### New features
+- [ ] **`POST /v1/generate-workout`** — `style: lift | hiit`, equipment/split/
+  time inputs, deterministic selection engine, why-picked metadata.
+  *Prereq: revise PRODUCT.md §3/§13 non-goal (single-session showcase
+  generator vs. Orion's multi-week programming).*
+- [ ] **Dataset modality expansion** — author conditioning + mobility record
+  sets (schema is ready; purely additive dataset MINOR + snapshot release).
+  Decide single-primary vs. tag-array classification for overlaps (leaning
+  single-primary).
 
-## P5 — monetization
+### P2 polish (non-blocking)
+- [ ] OG image (concept in the brand design project; implement via next/og)
+- [ ] sitemap.xml + robots.txt
+- [ ] Custom 404 page for site routes
 
-- [ ] Ads: gated on traffic — EthicalAds requires ~50k pageviews/month (see
-  docs/ADS-SETUP.md). When approved: set `NEXT_PUBLIC_AD_PROVIDER` +
-  `NEXT_PUBLIC_AD_PUBLISHER_ID` and wire the provider client into the
-  env-gated slot.
-- ✅ Buy-me-a-coffee link, env-gated (`NEXT_PUBLIC_COFFEE_URL`, 2026-07-03)
-- [ ] Document revenue vs. hosting/AI cost tracking
-
-## P6 — Orion migration
-
-- [ ] Publish pinned snapshot release (launch gate item)
-- [ ] Point Orion's seed/build at the pinned version; delete duplicated JSON in
-  Orion (`data/` + `knowledgebase/`)
-- [ ] Verify every existing `id` resolves (soft-reference integrity for
-  `session_exercise.exercise_id`)
-- [ ] Update Orion docs
-
-## P7 — MCP server (fast-follow)
-
-- [ ] First-party MCP server: `search_exercises`, `get_exercise`, `list_meta`
-  over the same query engine; host on Vercel; document connection on docs site
-
-## New features (post-launch-gate)
-
-- [ ] **`POST /v1/generate-workout`** — "generate me a workout" endpoint.
-  The dataset was built for exactly this (SFR ratings, `preferred_rank`,
-  gold-standard flags, substitution groups, rep ranges, equipment taxonomy),
-  so a **deterministic** generator is feasible without any AI cost.
-  - Inputs (sketch): `style` (`lift` | `hiit`), `available_equipment`, target
-    muscles or split (push/pull/legs/full-body), time budget or exercise count,
-    experience/`tier` preference, optional `home_hotel_friendly`.
-  - **`style=lift`** — straight-sets hypertrophy session: ordered exercise
-    list with sets × rep ranges (from `default_rep_low/high`), compound-first
-    ordering via `preferred_rank`/pattern, SFR-aware selection.
-  - **`style=hiit`** — circuit/interval session: rounds of work/rest intervals
-    (e.g. 40s on / 20s off) instead of rep ranges, alternating movement
-    patterns and muscle groups for sustainable pacing; selection biased to
-    low-setup exercises (bodyweight, dumbbells, bands; skip barbell/rack-bound
-    lifts, `unilateral` used for density). Styles share one selection engine
-    with different scoring + output shapes, so adding future styles (e.g.
-    `circuit`, `mobility`) is cheap.
-  - **Dataset note for HIIT:** the catalog is hypertrophy-curated — it has no
-    classic conditioning moves (burpees, mountain climbers, jump rope) and no
-    field marking conditioning suitability. v1 of HIIT can work from
-    equipment/pattern heuristics; a proper `conditioning_suitable` field (or a
-    small conditioning exercise set) would be a dataset MINOR release.
-  - Output (both styles): each entry carries the full record + why-picked
-    metadata (rank, SFR, gold standard).
-  - **Decision needed first:** PRODUCT.md §3/§13 currently lists program
-    generation as an explicit non-goal ("that's Orion's job") and §12 warns
-    against becoming a workout-programming API. Adding this means revising
-    that stance — e.g. scoping it as a *single-session showcase generator*
-    (stateless, no programming/periodization/user accounts) that demos the
-    dataset's value, while multi-week programming stays Orion's territory.
-    Update PRODUCT.md before building.
-  - Rate-limit consideration: more compute-shaped than the read API but still
-    cheap and cacheable per input combination; keep it inside the free tier.
-
-### Dataset expansion: modalities (conditioning, mobility)
-
-- [ ] **Add a `modality` axis to the catalog** with a clear, first-class
-  distinction between the four training purposes:
-  `hypertrophy` · `conditioning` · `calisthenics` · `mobility`.
-  - Today the catalog is implicitly all-hypertrophy; calisthenics are only
-    signaled indirectly (`progression_group`, `tier: extended`). An explicit
-    `modality` field makes the distinction queryable (`?modality=conditioning`)
-    and gives the workout generator a principled selection pool per style.
-  - [ ] **Classic conditioning subsection** — new records: burpees, mountain
-    climbers, jump rope, kettlebell swings, jumping jacks, high knees,
-    bear crawl, etc. Powers `style=hiit` properly.
-  - [ ] **Mobility subsection** — new records (couch stretch, 90/90, thoracic
-    rotations, etc.); enables a future `style=mobility`.
-  - **Classification rule needed:** modalities overlap (weighted dips are
-    hypertrophy *and* calisthenics; KB swings are conditioning *and* hinge
-    work). Decide single primary `modality` vs. a tag array — leaning single
-    primary (matches the `primary_muscle` precedent, keeps filters simple),
-    with overlap expressible via existing fields (pattern, equipment,
-    progression_group).
-  - ✅ **Schema care — resolved 2026-07-03 (pre-launch):** `modality` field
-    shipped (dataset 1.1.0: hypertrophy ×136 / calisthenics ×47, classified by
-    `progression_group` presence), and the hypertrophy-shaped fields
-    (`sfr_class`, `preferred_rank`, `e1rm_substitution_group`, rep range) are
-    now **nullable by contract** — a deliberate one-time pre-launch revision
-    while /v1 had zero consumers. See CHANGELOG. Authoring conditioning/
-    mobility records is now purely additive (new records + new enum values).
-  - Remaining: author the conditioning + mobility record sets → dataset MINOR
-    release + new pinned snapshot.
-
-## Infrastructure & housekeeping
-
-- [ ] CI (GitHub Actions): `data:check` + tests + typecheck on every PR
-- [ ] Vercel Analytics (or similar) — the §11 success metric is the
-  landing → docs → first-request funnel; currently unmeasured
-- [ ] Uptime monitoring on `/health`
-- [ ] Custom 404 page for site routes (API already returns JSON envelopes)
+### Housekeeping
+- [ ] CI on PRs (GitHub Actions: data:check + test + typecheck) — pushes
+  currently deploy without a gate
+- [ ] Uptime monitoring on /health
+- [ ] CHANGELOG: cut the "Unreleased" section into a dated launch entry when
+  you announce
 
 ## Open product questions (PRODUCT.md §12)
-
-- [ ] Suggestion moderation: who reviews, and how accepted suggestions become a
-  dataset `MINOR`/`PATCH` bump + new snapshot release
-- [ ] Licensing reach: do future premium fields stay CC BY 4.0 or become
-  API-only?
+- [ ] Premium-field licensing (future fields CC BY vs. API-only)
+- [ ] Suggestion acceptance flow details (review cadence, release batching)
