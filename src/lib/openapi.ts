@@ -41,7 +41,7 @@ const errorSchema = {
       properties: {
         code: {
           type: "string",
-          enum: ["invalid_parameter", "not_found", "internal_error"],
+          enum: ["invalid_parameter", "not_found", "rate_limited", "internal_error"],
           description: "Stable machine-readable error code.",
         },
         message: { type: "string", description: "Human-readable explanation." },
@@ -193,6 +193,7 @@ export function buildOpenApiDocument(origin: string) {
                 "application/json": { schema: { $ref: "#/components/schemas/Error" } },
               },
             },
+            "429": { $ref: "#/components/responses/RateLimited" },
           },
         },
       },
@@ -225,6 +226,7 @@ export function buildOpenApiDocument(origin: string) {
                 "application/json": { schema: { $ref: "#/components/schemas/Error" } },
               },
             },
+            "429": { $ref: "#/components/responses/RateLimited" },
           },
         },
       },
@@ -269,6 +271,21 @@ export function buildOpenApiDocument(origin: string) {
       },
     },
     components: {
+      responses: {
+        RateLimited: {
+          description:
+            "Anonymous rate limit exceeded (100 requests/day per IP, plus a per-minute burst limit). Honor Retry-After; RateLimit-Limit / RateLimit-Remaining / RateLimit-Reset headers are sent on every /v1 response.",
+          headers: {
+            "Retry-After": {
+              description: "Seconds until you may retry.",
+              schema: { type: "integer" },
+            },
+          },
+          content: {
+            "application/json": { schema: { $ref: "#/components/schemas/Error" } },
+          },
+        },
+      },
       schemas: {
         Exercise: exerciseSchema,
         ExerciseList: {
