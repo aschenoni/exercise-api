@@ -29,6 +29,9 @@ export function BrandMark({ size = 26 }: { size?: number }) {
   );
 }
 
+// Env-gated (PRODUCT.md §6.5): coffee links render only when configured.
+const COFFEE_URL = process.env.NEXT_PUBLIC_COFFEE_URL;
+
 export function SiteHeader() {
   return (
     <header className="site-header">
@@ -44,6 +47,11 @@ export function SiteHeader() {
           <a href="/openapi.json" className="hide-mobile">
             OpenAPI
           </a>
+          {COFFEE_URL && (
+            <a href={COFFEE_URL} className="hide-mobile" rel="noopener">
+              ☕ Coffee
+            </a>
+          )}
           <a href="/docs" className="btn-primary">
             Read the docs
           </a>
@@ -85,6 +93,11 @@ export function SiteFooter() {
           <div className="footer-col-label">SUPPORT</div>
           <div className="footer-links">
             <a href="/health">Status</a>
+            {COFFEE_URL && (
+              <a href={COFFEE_URL} rel="noopener">
+                ☕ Buy me a coffee
+              </a>
+            )}
           </div>
         </div>
       </div>
