@@ -86,7 +86,15 @@ export function SiteFooter() {
           <div className="footer-col-label">DATA</div>
           <div className="footer-links">
             <span className="soon">Suggest an exercise (soon)</span>
-            <span className="soon">GitHub (soon)</span>
+            <a href="https://github.com/aschenoni/exercise-api" rel="noopener">
+              GitHub
+            </a>
+            <a
+              href="https://github.com/aschenoni/exercise-api/releases"
+              rel="noopener"
+            >
+              Dataset snapshots
+            </a>
           </div>
         </div>
         <div>

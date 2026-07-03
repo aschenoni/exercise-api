@@ -26,6 +26,11 @@ Two independently versioned axes (see PRODUCT.md §10):
   vocabulary in `GET /v1/meta`.
 - `license` object in `GET /v1/meta` (additive): data/code license identifiers,
   `attribution_required: true`, and a ready-to-use attribution line.
+- `GET /llms.txt` + `GET /llms-full.txt` — agent-readable API map, generated
+  from the schema/dataset modules.
+- Anonymous rate limiting on `/v1/*`: 100 requests/day + 60/min burst per IP;
+  `RateLimit-Limit/Remaining/Reset` headers on every /v1 response; new stable
+  error code `rate_limited` (429) with `Retry-After`.
 
 ### Dataset
 - **1.1.0** — added `modality` to all 183 records (`hypertrophy` ×136,

@@ -21,25 +21,25 @@ Remaining work, organized by phase (companion to [PLAN.md](PLAN.md)).
 - ✅ Attribution: preferred credit format in `DATA-LICENSE`, served
   machine-readably via the `license` object in `GET /v1/meta`
 
-## 🚀 Launch gate — minimum to announce publicly
+## 🚀 Launch gate — ✅ COMPLETE 2026-07-03
 
-The plan (PLAN.md "Sequencing") requires P3 before any announcement. The honest
-minimum bar:
+- ✅ **`/llms.txt` + `/llms-full.txt`** — generated from schema/meta at request
+  time (same source of truth as OpenAPI).
+- ✅ **Anonymous rate limiting** — middleware on `/v1/*`: 100/day + 60/min
+  burst per IP, `RateLimit-*` headers, `429` `rate_limited` envelope +
+  `Retry-After`. Upstash store when configured; in-memory best-effort
+  fallback until then (degrades open). *Optional hardening: provision
+  Upstash Redis for accurate cross-instance counts.*
+- ✅ **Docs site v1** — /docs: endpoints, param tables, field dictionary
+  (generated from FIELD_SPECS), live vocabularies, conventions, rate-limit +
+  versioning policy, attribution. /docs/api: Scalar-rendered OpenAPI
+  (pinned + SRI).
+- ✅ **GitHub repo public + Git integration** —
+  github.com/aschenoni/exercise-api; pushes to main auto-deploy production.
+- ✅ **Dataset snapshot release** — `exercises@1.1.0.json` published:
+  github.com/aschenoni/exercise-api/releases/tag/dataset-v1.1.0
 
-- [ ] **`/llms.txt` + `/llms-full.txt`** — advertised on the landing page but not
-  yet served. Quickest win; generate from the docs/spec content.
-- [ ] **Anonymous rate limiting** — the site *says* "first 100 calls/day free";
-  nothing enforces it. 100/day per IP + ~60/min burst (Vercel WAF rule or
-  Upstash/KV token bucket in middleware), `RateLimit-*` headers, `429` error
-  envelope + `Retry-After`.
-- [ ] **Docs site v1** — field dictionary (19 fields), query-param tables,
-  controlled-vocab reference, versioning & rate-limit policy. Rendered OpenAPI
-  (Scalar) on the docs site.
-- [ ] **GitHub repo public + Git integration** — deploys are currently CLI-only
-  from one machine; wire Vercel Git integration so pushes deploy. Enables the
-  footer "GitHub" link and snapshot releases.
-- [ ] **Dataset snapshot release** — immutable `exercises@1.0.0.json` GitHub
-  Release (P6 prerequisite, and what consumers pin).
+**The site can now be announced publicly.**
 
 ## P2 — developer product surface (remainder)
 
