@@ -117,6 +117,36 @@ minimum bar:
   - Rate-limit consideration: more compute-shaped than the read API but still
     cheap and cacheable per input combination; keep it inside the free tier.
 
+### Dataset expansion: modalities (conditioning, mobility)
+
+- [ ] **Add a `modality` axis to the catalog** with a clear, first-class
+  distinction between the four training purposes:
+  `hypertrophy` · `conditioning` · `calisthenics` · `mobility`.
+  - Today the catalog is implicitly all-hypertrophy; calisthenics are only
+    signaled indirectly (`progression_group`, `tier: extended`). An explicit
+    `modality` field makes the distinction queryable (`?modality=conditioning`)
+    and gives the workout generator a principled selection pool per style.
+  - [ ] **Classic conditioning subsection** — new records: burpees, mountain
+    climbers, jump rope, kettlebell swings, jumping jacks, high knees,
+    bear crawl, etc. Powers `style=hiit` properly.
+  - [ ] **Mobility subsection** — new records (couch stretch, 90/90, thoracic
+    rotations, etc.); enables a future `style=mobility`.
+  - **Classification rule needed:** modalities overlap (weighted dips are
+    hypertrophy *and* calisthenics; KB swings are conditioning *and* hinge
+    work). Decide single primary `modality` vs. a tag array — leaning single
+    primary (matches the `primary_muscle` precedent, keeps filters simple),
+    with overlap expressible via existing fields (pattern, equipment,
+    progression_group).
+  - **Schema care:** several current fields are hypertrophy-shaped and
+    always-present (`e1rm_substitution_group`, `sfr_class`, rep ranges,
+    `preferred_rank`). Conditioning/mobility records need a decision:
+    sentinel group values and duration-as-reps, or making fields nullable —
+    the latter is a **retype of the /v1 contract** (string → string|null) and
+    must not ship inside /v1. Design this before authoring records.
+  - Ship as a dataset **MINOR** release (new field + new records + new enum
+    values are all additive) — the first real exercise of the §10 versioning
+    machinery, including a new pinned snapshot.
+
 ## Infrastructure & housekeeping
 
 - [ ] CI (GitHub Actions): `data:check` + tests + typecheck on every PR
