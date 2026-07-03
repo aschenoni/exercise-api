@@ -81,6 +81,28 @@ minimum bar:
 - [ ] First-party MCP server: `search_exercises`, `get_exercise`, `list_meta`
   over the same query engine; host on Vercel; document connection on docs site
 
+## New features (post-launch-gate)
+
+- [ ] **`POST /v1/generate-workout`** — "generate me a workout" endpoint.
+  The dataset was built for exactly this (SFR ratings, `preferred_rank`,
+  gold-standard flags, substitution groups, rep ranges, equipment taxonomy),
+  so a **deterministic** generator is feasible without any AI cost.
+  - Inputs (sketch): `available_equipment`, target muscles or split
+    (push/pull/legs/full-body), time budget or exercise count,
+    experience/`tier` preference, optional `home_hotel_friendly`.
+  - Output: ordered exercise list with sets × rep ranges (from
+    `default_rep_low/high`), each entry carrying the full record + why-picked
+    metadata (rank, SFR, gold standard).
+  - **Decision needed first:** PRODUCT.md §3/§13 currently lists program
+    generation as an explicit non-goal ("that's Orion's job") and §12 warns
+    against becoming a workout-programming API. Adding this means revising
+    that stance — e.g. scoping it as a *single-session showcase generator*
+    (stateless, no programming/periodization/user accounts) that demos the
+    dataset's value, while multi-week programming stays Orion's territory.
+    Update PRODUCT.md before building.
+  - Rate-limit consideration: more compute-shaped than the read API but still
+    cheap and cacheable per input combination; keep it inside the free tier.
+
 ## Infrastructure & housekeeping
 
 - [ ] CI (GitHub Actions): `data:check` + tests + typecheck on every PR
