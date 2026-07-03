@@ -87,11 +87,25 @@ minimum bar:
   The dataset was built for exactly this (SFR ratings, `preferred_rank`,
   gold-standard flags, substitution groups, rep ranges, equipment taxonomy),
   so a **deterministic** generator is feasible without any AI cost.
-  - Inputs (sketch): `available_equipment`, target muscles or split
-    (push/pull/legs/full-body), time budget or exercise count,
+  - Inputs (sketch): `style` (`lift` | `hiit`), `available_equipment`, target
+    muscles or split (push/pull/legs/full-body), time budget or exercise count,
     experience/`tier` preference, optional `home_hotel_friendly`.
-  - Output: ordered exercise list with sets × rep ranges (from
-    `default_rep_low/high`), each entry carrying the full record + why-picked
+  - **`style=lift`** — straight-sets hypertrophy session: ordered exercise
+    list with sets × rep ranges (from `default_rep_low/high`), compound-first
+    ordering via `preferred_rank`/pattern, SFR-aware selection.
+  - **`style=hiit`** — circuit/interval session: rounds of work/rest intervals
+    (e.g. 40s on / 20s off) instead of rep ranges, alternating movement
+    patterns and muscle groups for sustainable pacing; selection biased to
+    low-setup exercises (bodyweight, dumbbells, bands; skip barbell/rack-bound
+    lifts, `unilateral` used for density). Styles share one selection engine
+    with different scoring + output shapes, so adding future styles (e.g.
+    `circuit`, `mobility`) is cheap.
+  - **Dataset note for HIIT:** the catalog is hypertrophy-curated — it has no
+    classic conditioning moves (burpees, mountain climbers, jump rope) and no
+    field marking conditioning suitability. v1 of HIIT can work from
+    equipment/pattern heuristics; a proper `conditioning_suitable` field (or a
+    small conditioning exercise set) would be a dataset MINOR release.
+  - Output (both styles): each entry carries the full record + why-picked
     metadata (rank, SFR, gold standard).
   - **Decision needed first:** PRODUCT.md §3/§13 currently lists program
     generation as an explicit non-goal ("that's Orion's job") and §12 warns
