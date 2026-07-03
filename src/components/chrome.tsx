@@ -1,12 +1,40 @@
 import Link from "next/link";
+import { useId } from "react";
 import { DATASET_VERSION } from "@/lib/dataset";
+
+/**
+ * The "Route slash" brand mark (Claude Design, 2026-07-03) — peach rounded
+ * square with a diagonal slash cut out. Bare version per the wordmark lockup;
+ * the tiled version lives in src/app/icon.svg. Mask id is unique per instance
+ * so header + footer can coexist.
+ */
+export function BrandMark({ size = 26 }: { size?: number }) {
+  const id = useId();
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
+      <mask id={id}>
+        <rect x="7" y="7" width="18" height="18" rx="4.2" fill="#fff" />
+        <rect
+          x="13.6"
+          y="-2"
+          width="4.8"
+          height="36"
+          rx="2.4"
+          transform="rotate(45 16 16)"
+          fill="#000"
+        />
+      </mask>
+      <rect x="7" y="7" width="18" height="18" rx="4.2" fill="#f5a97f" mask={`url(#${id})`} />
+    </svg>
+  );
+}
 
 export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="container site-header-inner">
         <Link href="/" className="brand">
-          <span className="brand-dot" />
+          <BrandMark size={28} />
           exerciseapi<span className="brand-suffix">/v1</span>
         </Link>
         <nav className="site-nav">
@@ -31,7 +59,7 @@ export function SiteFooter() {
       <div className="container footer-grid">
         <div>
           <div className="brand" style={{ marginBottom: 12 }}>
-            <span className="brand-dot" />
+            <BrandMark size={28} />
             exerciseapi
           </div>
           <p className="footer-blurb">

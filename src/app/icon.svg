@@ -1,4 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="#0b0d10"/>
-  <rect x="9" y="9" width="14" height="14" rx="3" fill="#f5a97f"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="sq"><rect x="7" y="7" width="18" height="18" rx="4.2"></rect></clipPath>
+  </defs>
+  <rect x="1" y="1" width="30" height="30" rx="7" fill="#101318" stroke="#242a33" stroke-width="1"></rect>
+  <rect x="7" y="7" width="18" height="18" rx="4.2" fill="#f5a97f"></rect>
+  <rect x="13.6" y="-2" width="4.8" height="36" rx="2.4" transform="rotate(45 16 16)" fill="#101318" clip-path="url(#sq)"></rect>
 </svg>

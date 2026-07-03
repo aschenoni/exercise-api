@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <clipPath id="sq"><rect x="292" y="292" width="440" height="440" rx="103"></rect></clipPath>
+  </defs>
+  <rect width="1024" height="1024" fill="#0b0d10"></rect>
+  <rect x="292" y="292" width="440" height="440" rx="103" fill="#f5a97f"></rect>
+  <rect x="453" y="-46" width="117" height="1116" rx="58" transform="rotate(45 512 512)" fill="#0b0d10" clip-path="url(#sq)"></rect>
+</svg>

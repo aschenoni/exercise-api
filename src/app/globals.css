@@ -147,12 +147,8 @@ code,
   color: var(--text);
 }
 
-.brand-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  background: var(--accent);
-  display: inline-block;
+.brand svg {
+  margin: -5px;
 }
 
 .brand-suffix {
