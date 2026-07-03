@@ -1,7 +1,7 @@
 # ExerciseAPI — Landing Page Design Spec
 
 **Phase:** P2 (see `docs/PLAN.md`) · **Author:** Austin Schenoni · **Date:** 2026-07-02
-**Live product (current placeholder):** https://exercise-api-five.vercel.app
+**Live product:** https://exercise-api.com (canonical; vercel.app alias remains)
 **Live API to design against:** `GET /v1/exercises`, `GET /v1/exercises/{id}`, `GET /v1/meta`, `GET /openapi.json` — all public, no key.
 
 ## 1. What this page is
