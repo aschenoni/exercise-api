@@ -90,7 +90,16 @@ describe("POST /v1/suggestions", () => {
 describe("POST /v1/chat", () => {
   afterEach(() => vi.unstubAllEnvs());
 
-  it("503s when no gateway credentials exist", async () => {
+  it("503s when disabled (the default)", async () => {
+    const res = await chat(post("/v1/chat", { messages: [{ id: "1", role: "user", parts: [{ type: "text", text: "hi" }] }] }));
+    expect(res.status).toBe(503);
+    const body = await res.json();
+    expect(body.error.code).toBe("service_unavailable");
+    expect(body.error.message).toContain("disabled");
+  });
+
+  it("503s when enabled but no gateway credentials exist", async () => {
+    vi.stubEnv("CHAT_ENABLED", "true");
     vi.stubEnv("AI_GATEWAY_API_KEY", "");
     vi.stubEnv("VERCEL_OIDC_TOKEN", "");
     vi.stubEnv("VERCEL", "");
@@ -100,6 +109,7 @@ describe("POST /v1/chat", () => {
   });
 
   it("400s on malformed bodies when credentials exist", async () => {
+    vi.stubEnv("CHAT_ENABLED", "true");
     vi.stubEnv("AI_GATEWAY_API_KEY", "test-key");
     const res = await chat(post("/v1/chat", { messages: [] }));
     expect(res.status).toBe(400);
@@ -110,6 +120,7 @@ describe("POST /v1/chat", () => {
   });
 
   it("rejects histories with no surviving user text after role sanitization", async () => {
+    vi.stubEnv("CHAT_ENABLED", "true");
     vi.stubEnv("AI_GATEWAY_API_KEY", "test-key");
     // system-role injection + tool parts are stripped; nothing user remains → 400
     const res = await chat(

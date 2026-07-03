@@ -36,11 +36,12 @@ Companion to [PLAN.md](PLAN.md). **Last updated:** 2026-07-03 (P4 shipped)
   with a pointer to the issue tracker.
 - [ ] **Enable Web Analytics** in the Vercel dashboard (project → Analytics
   tab → Enable). The component is deployed; it no-ops until enabled.
-- [ ] **Unlock AI Gateway (chat is blocked on this)**: verified in prod logs —
-  "AI Gateway requires a valid credit card on file to service requests."
-  Add a card in the Vercel dashboard (AI tab → add credit card) to unlock the
-  free credits; chat then works with zero further config (OIDC). Adjust
-  `CHAT_GLOBAL_DAILY_CAP` (default 300 msgs/day) to bound spend.
+- [ ] **Re-enable chat when ready** (decided 2026-07-03: chat is OFF via kill
+  switch; suggestions stay on). Two steps: add a credit card in the Vercel
+  dashboard (AI tab) to unlock AI Gateway free credits (verified in prod logs
+  as the blocker), then set `CHAT_ENABLED=true` in Vercel env and redeploy —
+  endpoint, /chat page, header link, OpenAPI, and llms.txt all reappear
+  together. `CHAT_GLOBAL_DAILY_CAP` (default 300/day) bounds spend.
 - [ ] Optional hardening: provision **Upstash Redis** (Vercel Marketplace) so
   rate limits are exact across instances; env vars are already wired.
 - [ ] Optional: www → apex redirect (dashboard toggle), EthicalAds application

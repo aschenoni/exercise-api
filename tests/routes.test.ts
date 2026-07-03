@@ -81,12 +81,12 @@ describe("GET /openapi.json", () => {
     const doc = await res.json();
     expect(doc.openapi).toBe("3.1.0");
     expect(doc.servers[0].url).toBe("http://localhost");
+    // /v1/chat is absent while the CHAT_ENABLED kill switch is off (default)
     expect(Object.keys(doc.paths)).toEqual([
       "/v1/exercises",
       "/v1/exercises/{id}",
       "/v1/meta",
       "/v1/suggestions",
-      "/v1/chat",
       "/health",
     ]);
     const props = doc.components.schemas.Exercise.properties;

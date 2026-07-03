@@ -4,7 +4,7 @@ import { EXERCISE_FIELDS, FIELD_SPECS, SORT_KEYS } from "@/lib/schema";
 import { DEFAULT_LIMIT, MAX_LIMIT } from "@/lib/query";
 import { SiteHeader, SiteFooter } from "@/components/chrome";
 import { CodeView, JsonView } from "@/components/highlight";
-import { SITE_URL } from "@/lib/site";
+import { isChatEnabled, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Docs — ExerciseAPI",
@@ -31,7 +31,9 @@ const ENDPOINTS: [string, string, string][] = [
   ["GET /openapi.json", "/openapi.json", "OpenAPI 3.1 spec — the canonical machine contract."],
   ["GET /llms.txt", "/llms.txt", "Concise API map for doc-reading agents (llms-full.txt = everything)."],
   ["POST /v1/suggestions", "/openapi.json", "Suggest a missing exercise / correction — filed to the public issue tracker for review. 5/day per IP."],
-  ["POST /v1/chat", "/chat", "Catalog-grounded assistant (streaming). Try it at /chat. 20/day per IP."],
+  ...(isChatEnabled()
+    ? ([["POST /v1/chat", "/chat", "Catalog-grounded assistant (streaming). Try it at /chat. 20/day per IP."]] as [string, string, string][])
+    : []),
 ];
 
 const PARAMS: [string, string, string][] = [

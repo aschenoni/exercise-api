@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useId } from "react";
 import { DATASET_VERSION } from "@/lib/dataset";
+import { isChatEnabled } from "@/lib/site";
 
 /**
  * The "Route slash" brand mark (Claude Design, 2026-07-03) — peach rounded
@@ -47,9 +48,11 @@ export function SiteHeader() {
           <a href="/openapi.json" className="hide-mobile">
             OpenAPI
           </a>
-          <a href="/chat" className="hide-mobile">
-            Chat
-          </a>
+          {isChatEnabled() && (
+            <a href="/chat" className="hide-mobile">
+              Chat
+            </a>
+          )}
           {COFFEE_URL && (
             <a href={COFFEE_URL} className="hide-mobile" rel="noopener">
               ☕ Coffee

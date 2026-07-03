@@ -6,6 +6,7 @@ import {
   type UIMessage,
 } from "ai";
 import { DATASET_VERSION, getMeta } from "@/lib/dataset";
+import { isChatEnabled } from "@/lib/site";
 import { retrieveContext } from "@/lib/retrieval";
 import { bumpDailyCounter } from "@/lib/ratelimit";
 import { errorResponse, handleOptions } from "@/lib/http";
@@ -56,6 +57,12 @@ ${JSON.stringify(context)}`;
 }
 
 export async function POST(request: Request): Promise<Response> {
+  if (!isChatEnabled()) {
+    return errorResponse(
+      "service_unavailable",
+      "Chat is currently disabled. The read API and POST /v1/suggestions are unaffected — see /docs.",
+    );
+  }
   if (!hasGatewayCredentials()) {
     return errorResponse(
       "service_unavailable",

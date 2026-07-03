@@ -13,6 +13,7 @@ import {
 } from "./schema";
 import { DATASET_VERSION, getExerciseById } from "./dataset";
 import { DEFAULT_LIMIT, MAX_LIMIT } from "./query";
+import { isChatEnabled } from "./site";
 
 /**
  * OpenAPI 3.1 document, generated at request time from the same schema module
@@ -294,7 +295,7 @@ export function buildOpenApiDocument(origin: string) {
           },
         },
       },
-      "/v1/chat": {
+      ...(isChatEnabled() ? { "/v1/chat": {
         post: {
           operationId: "chat",
           summary: "Catalog-grounded assistant (streaming)",
@@ -334,7 +335,7 @@ export function buildOpenApiDocument(origin: string) {
             "503": { $ref: "#/components/responses/Unavailable" },
           },
         },
-      },
+      } } : {}),
       "/health": {
         get: {
           operationId: "getHealth",
