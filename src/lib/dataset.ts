@@ -36,6 +36,7 @@ export interface Meta {
   patterns: { value: string; count: number }[];
   equipment: { value: string; count: number }[];
   sfr_classes: { value: string; count: number }[];
+  modalities: { value: string; count: number }[];
   substitution_groups: { value: string; count: number }[];
   progression_groups: { value: string; count: number }[];
 }
@@ -58,8 +59,11 @@ export function getMeta(): Meta {
     primary_muscles: countBy(all.map((e) => e.primary_muscle)),
     patterns: countBy(all.map((e) => e.pattern)),
     equipment: countBy(all.flatMap((e) => e.equipment)),
-    sfr_classes: countBy(all.map((e) => e.sfr_class)),
-    substitution_groups: countBy(all.map((e) => e.e1rm_substitution_group)),
+    sfr_classes: countBy(all.map((e) => e.sfr_class).filter((v) => v !== null)),
+    modalities: countBy(all.map((e) => e.modality)),
+    substitution_groups: countBy(
+      all.map((e) => e.e1rm_substitution_group).filter((v) => v !== null),
+    ),
     progression_groups: countBy(
       all.map((e) => e.progression_group).filter((g): g is string => g !== null),
     ),

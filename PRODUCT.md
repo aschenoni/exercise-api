@@ -56,19 +56,25 @@ moat.
 |---|---|
 | Total exercises | **183** (87 `core`, 96 `extended`) |
 | Identifier | stable, URL-safe slug (`barbell_bench_press`) — unique across the catalog |
-| Fields per record | 19 (normalized; nullable fields filled with `null` / `[]`) |
+| Fields per record | 20 (normalized; nullable fields filled with `null` / `[]`) |
 | Source | hand-curated original work by the Orion team (no upstream dataset to inherit) |
 | Provenance doc | `data/SOURCE.md` — cites ACE EMG studies, Contreras, Steven Low's *Overcoming Gravity*, etc. |
 
-**Record shape (19 fields):**
+**Record shape (20 fields):**
 `id`, `name`, `primary_muscle`, `secondary_muscles[]`, `pattern`, `equipment[]`,
-`sfr_class` (high/moderate/low), `is_gold_standard`, `preferred_rank`,
-`e1rm_substitution_group`, `default_rep_low`, `default_rep_high`, `loadable`,
-`unilateral`, `home_hotel_friendly`, `tier` (core/extended), `progression_group`,
-`progression_level`, `cues`.
+`sfr_class` (high/moderate/low, nullable), `is_gold_standard`, `preferred_rank`
+(nullable), `e1rm_substitution_group` (nullable), `default_rep_low` /
+`default_rep_high` (nullable), `loadable`, `unilateral`, `home_hotel_friendly`,
+`tier` (core/extended), `modality` (hypertrophy/conditioning/calisthenics/mobility),
+`progression_group`, `progression_level`, `cues`.
+
+The hypertrophy-shaped fields are nullable by contract (pre-launch decision,
+2026-07-03) so future `conditioning`/`mobility` records don't fake values;
+every current record is non-null.
 
 **Controlled vocabularies:** 16 primary muscles, ~20 movement patterns, an equipment
-token set, SFR classes, and named substitution/progression groups. Exposed via `/v1/meta`.
+token set, SFR classes, modalities, and named substitution/progression groups.
+Exposed via `/v1/meta`.
 
 ### Data licensing
 - **Code:** MIT.

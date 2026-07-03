@@ -1,5 +1,5 @@
 import type { Exercise, SortKey } from "./schema";
-import { EQUIPMENT, PATTERNS, PRIMARY_MUSCLES, SFR_CLASSES, SORT_KEYS, TIERS } from "./schema";
+import { EQUIPMENT, MODALITIES, PATTERNS, PRIMARY_MUSCLES, SFR_CLASSES, SORT_KEYS, TIERS } from "./schema";
 import { EXERCISES, getMeta } from "./dataset";
 
 /**
@@ -19,6 +19,7 @@ export interface ListQuery {
   pattern?: string[];
   sfr_class?: string[];
   tier?: string[];
+  modality?: string[];
   substitution_group?: string[];
   progression_group?: string[];
   equipment?: string[];
@@ -127,6 +128,7 @@ export function parseListQuery(params: URLSearchParams): ListQuery {
     pattern: parseCsvEnum(params, "pattern", PATTERNS),
     sfr_class: parseCsvEnum(params, "sfr_class", SFR_CLASSES),
     tier: parseCsvEnum(params, "tier", TIERS),
+    modality: parseCsvEnum(params, "modality", MODALITIES),
     substitution_group: parseCsvFromDataset(params, "substitution_group", knownSubGroups),
     progression_group: parseCsvFromDataset(params, "progression_group", knownProgGroups),
     equipment: parseCsvEnum(params, "equipment", EQUIPMENT),
@@ -159,11 +161,14 @@ export function runListQuery(query: ListQuery): ListResult {
     )
       return false;
     if (query.pattern && !query.pattern.includes(e.pattern)) return false;
-    if (query.sfr_class && !query.sfr_class.includes(e.sfr_class)) return false;
+    if (query.sfr_class && (e.sfr_class === null || !query.sfr_class.includes(e.sfr_class)))
+      return false;
     if (query.tier && !query.tier.includes(e.tier)) return false;
+    if (query.modality && !query.modality.includes(e.modality)) return false;
     if (
       query.substitution_group &&
-      !query.substitution_group.includes(e.e1rm_substitution_group)
+      (e.e1rm_substitution_group === null ||
+        !query.substitution_group.includes(e.e1rm_substitution_group))
     )
       return false;
     if (
@@ -196,9 +201,11 @@ export function runListQuery(query: ListQuery): ListResult {
   const dir = query.sortDesc ? -1 : 1;
   results = [...results].sort((a, b) => {
     const key = query.sort;
+    // Null ranks sort after every real rank (ascending); two nulls tie → id tiebreak.
+    const UNRANKED = Number.MAX_SAFE_INTEGER;
     const cmp =
       key === "preferred_rank"
-        ? a.preferred_rank - b.preferred_rank
+        ? (a.preferred_rank ?? UNRANKED) - (b.preferred_rank ?? UNRANKED)
         : a[key].localeCompare(b[key]);
     // Stable tiebreak on id so pagination is deterministic.
     return cmp !== 0 ? dir * cmp : a.id.localeCompare(b.id);

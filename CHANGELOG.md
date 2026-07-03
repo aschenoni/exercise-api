@@ -16,8 +16,19 @@ Two independently versioned axes (see PRODUCT.md §10):
 - Response conventions: list envelope `{ object, data, count, total, limit, offset }`,
   error envelope `{ error: { code, message } }`, CORS on all endpoints,
   CDN caching (`s-maxage`), `X-Dataset-Version` header.
+- **Pre-launch contract revision (2026-07-03, deliberate one-time exception to
+  additive-only — decided while `/v1` had zero external consumers):**
+  `sfr_class`, `preferred_rank`, `e1rm_substitution_group`, `default_rep_low`,
+  and `default_rep_high` are **nullable** so future conditioning/mobility
+  records don't fake hypertrophy values. All current records remain non-null.
+  From launch onward, `/v1` is strictly additive.
+- New `modality` field + `modality` filter on `GET /v1/exercises`; `modalities`
+  vocabulary in `GET /v1/meta`.
 
 ### Dataset
+- **1.1.0** — added `modality` to all 183 records (`hypertrophy` ×136,
+  `calisthenics` ×47; classified by `progression_group` presence).
+  `conditioning` and `mobility` values are reserved for upcoming releases.
 - **1.0.0** — initial catalog: 183 exercises (87 core, 96 extended), 19 fields,
   16 primary muscles, 20 movement patterns, 34 equipment tokens. Provenance in
   `data/SOURCE.md`.

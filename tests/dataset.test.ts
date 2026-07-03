@@ -41,6 +41,10 @@ describe("dataset contract", () => {
     expect(meta.primary_muscles.length).toBe(16);
     expect(meta.patterns.length).toBe(20);
     expect(meta.equipment.length).toBe(34);
+    expect(meta.modalities).toEqual([
+      { value: "calisthenics", count: 47 },
+      { value: "hypertrophy", count: 136 },
+    ]);
     expect(meta.dataset_version).toBe(DATASET_VERSION);
   });
 });

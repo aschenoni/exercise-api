@@ -137,15 +137,15 @@ minimum bar:
     primary (matches the `primary_muscle` precedent, keeps filters simple),
     with overlap expressible via existing fields (pattern, equipment,
     progression_group).
-  - **Schema care:** several current fields are hypertrophy-shaped and
-    always-present (`e1rm_substitution_group`, `sfr_class`, rep ranges,
-    `preferred_rank`). Conditioning/mobility records need a decision:
-    sentinel group values and duration-as-reps, or making fields nullable —
-    the latter is a **retype of the /v1 contract** (string → string|null) and
-    must not ship inside /v1. Design this before authoring records.
-  - Ship as a dataset **MINOR** release (new field + new records + new enum
-    values are all additive) — the first real exercise of the §10 versioning
-    machinery, including a new pinned snapshot.
+  - ✅ **Schema care — resolved 2026-07-03 (pre-launch):** `modality` field
+    shipped (dataset 1.1.0: hypertrophy ×136 / calisthenics ×47, classified by
+    `progression_group` presence), and the hypertrophy-shaped fields
+    (`sfr_class`, `preferred_rank`, `e1rm_substitution_group`, rep range) are
+    now **nullable by contract** — a deliberate one-time pre-launch revision
+    while /v1 had zero consumers. See CHANGELOG. Authoring conditioning/
+    mobility records is now purely additive (new records + new enum values).
+  - Remaining: author the conditioning + mobility record sets → dataset MINOR
+    release + new pinned snapshot.
 
 ## Infrastructure & housekeeping
 

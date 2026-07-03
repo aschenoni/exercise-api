@@ -42,7 +42,8 @@ describe("GET /v1/exercises/{id}", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.id).toBe("barbell_bench_press");
-    expect(Object.keys(body).length).toBe(19);
+    expect(Object.keys(body).length).toBe(20);
+    expect(body.modality).toBe("hypertrophy");
   });
 
   it("404s with the error envelope on a miss", async () => {
@@ -87,8 +88,17 @@ describe("GET /openapi.json", () => {
       "/health",
     ]);
     const props = doc.components.schemas.Exercise.properties;
-    expect(Object.keys(props).length).toBe(19);
+    expect(Object.keys(props).length).toBe(20);
     expect(props.primary_muscle.enum.length).toBe(16);
+    expect(props.modality.enum).toEqual([
+      "hypertrophy",
+      "conditioning",
+      "calisthenics",
+      "mobility",
+    ]);
+    // nullable-by-contract fields are JSON Schema type unions
+    expect(props.e1rm_substitution_group.type).toEqual(["string", "null"]);
+    expect(props.sfr_class.type).toEqual(["string", "null"]);
     expect(doc.paths["/v1/exercises"].get.operationId).toBe("listExercises");
   });
 });

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const ENDPOINTS: [string, string][] = [
-  ["GET /v1/exercises", "List & filter — muscle, pattern, equipment, available_equipment (subset match), tier, sfr_class, booleans, q search, sort, limit/offset."],
+  ["GET /v1/exercises", "List & filter — muscle, pattern, equipment, available_equipment (subset match), tier, modality, sfr_class, booleans, q search, sort, limit/offset."],
   ["GET /v1/exercises/{id}", "One exercise by stable slug, e.g. barbell_bench_press."],
   ["GET /v1/meta", "Controlled vocabularies with counts + current dataset_version."],
   ["GET /health", "Liveness + dataset size."],

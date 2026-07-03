@@ -95,13 +95,31 @@ export const SFR_CLASSES = ["high", "moderate", "low"] as const;
 
 export const TIERS = ["core", "extended"] as const;
 
+/**
+ * Training purpose. `conditioning` and `mobility` are reserved for upcoming
+ * dataset releases — the vocabulary is part of the contract from day one.
+ */
+export const MODALITIES = [
+  "hypertrophy",
+  "conditioning",
+  "calisthenics",
+  "mobility",
+] as const;
+
 export type PrimaryMuscle = (typeof PRIMARY_MUSCLES)[number];
 export type Pattern = (typeof PATTERNS)[number];
 export type Equipment = (typeof EQUIPMENT)[number];
 export type SfrClass = (typeof SFR_CLASSES)[number];
 export type Tier = (typeof TIERS)[number];
+export type Modality = (typeof MODALITIES)[number];
 
-/** One exercise record. 19 fields, all always present (nullable → null). */
+/**
+ * One exercise record. 20 fields, all always present (nullable → null).
+ * The hypertrophy-shaped fields (sfr_class, preferred_rank,
+ * e1rm_substitution_group, rep range) are nullable by contract so future
+ * conditioning/mobility records don't have to fake values — decided
+ * pre-launch, 2026-07-03.
+ */
 export interface Exercise {
   id: string;
   name: string;
@@ -109,16 +127,17 @@ export interface Exercise {
   secondary_muscles: PrimaryMuscle[];
   pattern: Pattern;
   equipment: Equipment[];
-  sfr_class: SfrClass;
+  sfr_class: SfrClass | null;
   is_gold_standard: boolean;
-  preferred_rank: number;
-  e1rm_substitution_group: string;
-  default_rep_low: number;
-  default_rep_high: number;
+  preferred_rank: number | null;
+  e1rm_substitution_group: string | null;
+  default_rep_low: number | null;
+  default_rep_high: number | null;
   loadable: boolean;
   unilateral: boolean;
   home_hotel_friendly: boolean;
   tier: Tier;
+  modality: Modality;
   progression_group: string | null;
   progression_level: number | null;
   cues: string;
@@ -174,8 +193,9 @@ export const FIELD_SPECS: Record<keyof Exercise, FieldSpec> = {
   sfr_class: {
     kind: "enum",
     enum: SFR_CLASSES,
+    nullable: true,
     description:
-      "Stimulus-to-fatigue ratio class: how much hypertrophy stimulus the exercise delivers per unit of fatigue. `high` is best.",
+      "Stimulus-to-fatigue ratio class: how much hypertrophy stimulus the exercise delivers per unit of fatigue. `high` is best. Null for non-hypertrophy modalities.",
   },
   is_gold_standard: {
     kind: "boolean",
@@ -185,23 +205,29 @@ export const FIELD_SPECS: Record<keyof Exercise, FieldSpec> = {
   preferred_rank: {
     kind: "integer",
     minimum: 1,
+    nullable: true,
     description:
-      "1-based preference order among exercises sharing a primary muscle — lower is more preferred by the curators.",
+      "1-based preference order among exercises sharing a primary muscle — lower is more preferred by the curators. Null for non-hypertrophy modalities.",
   },
   e1rm_substitution_group: {
     kind: "string",
+    nullable: true,
     description:
-      "Named group of interchangeable exercises for estimated-1RM tracking: swapping within a group preserves comparable strength-progression data.",
+      "Named group of interchangeable exercises for estimated-1RM tracking: swapping within a group preserves comparable strength-progression data. Null when e1RM tracking doesn't apply.",
   },
   default_rep_low: {
     kind: "integer",
     minimum: 1,
-    description: "Lower bound of the curated default hypertrophy rep range.",
+    nullable: true,
+    description:
+      "Lower bound of the curated default hypertrophy rep range. Null for time- or hold-based work.",
   },
   default_rep_high: {
     kind: "integer",
     minimum: 1,
-    description: "Upper bound of the curated default hypertrophy rep range.",
+    nullable: true,
+    description:
+      "Upper bound of the curated default hypertrophy rep range. Null for time- or hold-based work.",
   },
   loadable: {
     kind: "boolean",
@@ -222,6 +248,12 @@ export const FIELD_SPECS: Record<keyof Exercise, FieldSpec> = {
     enum: TIERS,
     description:
       "`core` = the curated default library; `extended` = additive variations and calisthenics progression rungs.",
+  },
+  modality: {
+    kind: "enum",
+    enum: MODALITIES,
+    description:
+      "Primary training purpose. Current catalog: `hypertrophy` and `calisthenics` (skill-progression work); `conditioning` and `mobility` are reserved for upcoming dataset releases. Overlaps (e.g. weighted dips) are classified by primary purpose — use pattern/equipment/progression fields for finer slicing.",
   },
   progression_group: {
     kind: "string",

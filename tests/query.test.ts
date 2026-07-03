@@ -99,6 +99,16 @@ describe("runListQuery filters", () => {
     expect(run("q=zzznothing").total).toBe(0);
   });
 
+  it("filters by modality, and the two current modalities partition the catalog", () => {
+    const hyp = run("modality=hypertrophy&limit=200");
+    const cal = run("modality=calisthenics&limit=200");
+    expect(hyp.data.every((e) => e.modality === "hypertrophy")).toBe(true);
+    expect(cal.data.every((e) => e.modality === "calisthenics")).toBe(true);
+    expect(hyp.total + cal.total).toBe(EXERCISES.length);
+    expect(run("modality=conditioning").total).toBe(0);
+    expect(() => parseListQuery(new URLSearchParams("modality=cardio"))).toThrow(QueryError);
+  });
+
   it("boolean filters work in both directions", () => {
     const yes = run("unilateral=true&limit=200").total;
     const no = run("unilateral=false&limit=200").total;
@@ -117,11 +127,11 @@ describe("sorting and pagination", () => {
   it("sorts by preferred_rank with deterministic id tiebreak", () => {
     const { data } = run("muscle=chest&sort=preferred_rank&limit=200");
     for (let i = 1; i < data.length; i++) {
-      const prev = data[i - 1];
-      const cur = data[i];
+      // null ranks sort last; within the chest slice all ranks are set today
+      const prevRank = data[i - 1].preferred_rank ?? Number.MAX_SAFE_INTEGER;
+      const curRank = data[i].preferred_rank ?? Number.MAX_SAFE_INTEGER;
       expect(
-        prev.preferred_rank < cur.preferred_rank ||
-          (prev.preferred_rank === cur.preferred_rank && prev.id < cur.id),
+        prevRank < curRank || (prevRank === curRank && data[i - 1].id < data[i].id),
       ).toBe(true);
     }
   });

@@ -117,7 +117,7 @@ export default function Home() {
         <section className="section">
           <div className="container section-pad">
             <div className="eyebrow">WHAT&apos;S IN THE DATA</div>
-            <h2 className="h2">19 fields per exercise</h2>
+            <h2 className="h2">20 fields per exercise</h2>
             <p className="section-lede" style={{ maxWidth: "60ch" }}>
               Beyond names and muscles, each exercise carries the metadata a training
               app usually has to build by hand. A few of the more useful ones:
