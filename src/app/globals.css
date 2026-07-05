@@ -944,10 +944,15 @@ code,
   right: 0;
   bottom: 0;
   z-index: 60;
-  background: rgba(11, 13, 16, 0.9);
+  background: rgba(11, 13, 16, 0.94);
+  -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-bottom: env(safe-area-inset-bottom);
+  /* Own compositing layer: works around iOS Safari's fixed+backdrop-filter
+     repaint bug where the bar detaches from the bottom during toolbar
+     collapse after scrolling. */
+  transform: translateZ(0);
 }
 
 .mobile-tab {
