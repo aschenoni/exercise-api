@@ -188,6 +188,14 @@ code,
   align-items: center;
 }
 
+/* Grid items default to min-width:auto, so unbreakable content (nowrap query
+   lines, long JSON strings) inflates the column past the viewport on phones
+   instead of engaging the inner overflow-x scrollbars. Let columns shrink. */
+.hero-grid > *,
+.demo-grid > * {
+  min-width: 0;
+}
+
 .hero h1 {
   font-family: var(--font-mono), monospace;
   font-weight: 700;
