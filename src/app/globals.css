@@ -938,6 +938,7 @@ code,
 
 /* ---------- mobile tab bar ---------- */
 .mobile-tabbar {
+  --tabbar-h: 60px;
   display: none;
   position: fixed;
   left: 0;
@@ -953,13 +954,37 @@ code,
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* Chrome on iOS mis-anchors bottom:0 to a layout viewport it never updates
+   when its toolbar collapses. dvh units DO track the toolbar, so position
+   the bar from the top using the dynamic viewport height instead. */
+@supports (top: 100dvh) {
+  .mobile-tabbar {
+    bottom: auto;
+    /* -1px = the border-top, which sits outside --tabbar-h */
+    top: calc(100dvh - var(--tabbar-h) - env(safe-area-inset-bottom) - 1px);
+  }
+}
+
+/* Failsafe: if any browser still floats the bar above the true bottom, the
+   region beneath it shows this solid bleed instead of page content. */
+.mobile-tabbar::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 50vh;
+  background: #0d0f13;
+}
+
 .mobile-tab {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  padding: 10px 0 8px;
+  height: var(--tabbar-h, 60px);
   color: var(--muted-2);
 }
 
