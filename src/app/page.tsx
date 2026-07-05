@@ -45,8 +45,8 @@ export default function Home() {
         <section className="container hero">
           <div className="hero-grid">
             <div>
-              <div className="eyebrow" style={{ marginBottom: 22 }}>
-                REST API · 100 FREE CALLS/DAY · NO KEY TO TRY
+              <div className="eyebrow eyebrow-pill" style={{ marginBottom: 22 }}>
+                REST API · 100 FREE CALLS/DAY
               </div>
               <h1>
                 The exercise

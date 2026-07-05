@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useId } from "react";
 import { DATASET_VERSION } from "@/lib/dataset";
 import { isChatEnabled } from "@/lib/site";
+import { MobileTabBar } from "./mobile-tabbar";
 
 /**
  * The "Route slash" brand mark (Claude Design, 2026-07-03) — peach rounded
@@ -35,6 +36,10 @@ const COFFEE_URL = process.env.NEXT_PUBLIC_COFFEE_URL;
 
 export function SiteHeader() {
   return (
+    <>
+    {/* Tab bar must NOT live inside the header: its backdrop-filter creates a
+        containing block that would trap position:fixed at the header's bottom. */}
+    <MobileTabBar showChat={isChatEnabled()} />
     <header className="site-header">
       <div className="container site-header-inner">
         <Link href="/" className="brand">
@@ -58,12 +63,13 @@ export function SiteHeader() {
               ☕ Coffee
             </a>
           )}
-          <a href="/docs" className="btn-primary">
+          <a href="/docs" className="btn-primary hide-mobile">
             Read the docs
           </a>
         </nav>
       </div>
     </header>
+    </>
   );
 }
 

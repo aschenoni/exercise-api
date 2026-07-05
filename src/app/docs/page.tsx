@@ -62,15 +62,13 @@ function VocabBlock({ title, items }: { title: string; items: { value: string; c
   return (
     <div style={{ marginBottom: 18 }}>
       <div className="panel-label">{title}</div>
-      <p style={{ fontSize: 13.5, lineHeight: 1.9, color: "var(--muted)" }}>
-        {items.map((i, idx) => (
-          <span key={i.value}>
-            <code className="inline-code">{i.value}</code>
-            <span style={{ color: "var(--faint)", fontSize: 11.5 }}> {i.count}</span>
-            {idx < items.length - 1 ? "  " : ""}
+      <div className="vocab-chips">
+        {items.map((i) => (
+          <span key={i.value} className="vocab-chip">
+            {i.value} <span className="count">{i.count}</span>
           </span>
         ))}
-      </p>
+      </div>
     </div>
   );
 }
@@ -101,12 +99,9 @@ export default function Docs() {
           </a>{" "}
           for agents.
         </p>
-        <nav
-          style={{ display: "flex", flexWrap: "wrap", gap: 14, margin: "18px 0 8px" }}
-          className="mono"
-        >
+        <nav className="docs-nav">
           {NAV.map(([id, label]) => (
-            <a key={id} href={`#${id}`} style={{ color: "var(--accent)", fontSize: 12.5 }}>
+            <a key={id} href={`#${id}`}>
               {label}
             </a>
           ))}
