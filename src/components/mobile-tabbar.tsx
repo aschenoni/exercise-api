@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 /**
  * Fixed bottom tab bar, mobile only (design: ExerciseAPI Mobile, 2026-07-05).
@@ -30,13 +31,43 @@ const ICONS = {
 
 export function MobileTabBar({ showChat }: { showChat: boolean }) {
   const pathname = usePathname();
+  const ref = useRef<HTMLElement>(null);
+
+  // iOS browsers (Safari AND Chrome, each with its own bug flavor) fail to
+  // re-anchor position:fixed elements when their toolbars collapse on scroll,
+  // leaving the bar floating with a gutter below. Track the visual viewport
+  // and translate the bar to the true visible bottom whenever they disagree.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const el = ref.current;
+    if (!vv || !el) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const gap = Math.max(0, vv.offsetTop + vv.height - window.innerHeight);
+      el.style.transform = gap > 0.5 ? `translateY(${gap}px)` : "";
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    vv.addEventListener("resize", schedule);
+    vv.addEventListener("scroll", schedule);
+    window.addEventListener("scroll", schedule, { passive: true });
+    update();
+    return () => {
+      cancelAnimationFrame(raf);
+      vv.removeEventListener("resize", schedule);
+      vv.removeEventListener("scroll", schedule);
+      window.removeEventListener("scroll", schedule);
+    };
+  }, []);
   const tabs: { href: string; label: string; icon: keyof typeof ICONS }[] = [
     { href: "/", label: "Home", icon: "home" },
     { href: "/docs", label: "Docs", icon: "docs" },
     ...(showChat ? [{ href: "/chat", label: "Chat", icon: "chat" as const }] : []),
   ];
   return (
-    <nav className="mobile-tabbar" aria-label="Primary">
+    <nav ref={ref} className="mobile-tabbar" aria-label="Primary">
       {tabs.map((t) => {
         const active = t.href === "/" ? pathname === "/" : pathname.startsWith(t.href);
         return (
